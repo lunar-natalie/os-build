@@ -6,7 +6,7 @@ RUN apt-get update && \
         # GCC, Binutils:
         wget build-essential gcc texinfo \
         # CMake build:
-        ninja-build clang-tidy grub-common xorriso mtools
+        sudo ninja-build clang-tidy grub-common xorriso mtools
 
 ENV DOWNLOAD_BINUTILS=binutils-2.41
 ENV DOWNLOAD_GCC=gcc-8.1.0
