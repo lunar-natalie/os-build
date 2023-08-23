@@ -1,11 +1,15 @@
 FROM ubuntu:22.04
 
+# Add Kitware APT repo for CMake
+ADD kitware-archive.sh /kitware-archive.sh
+RUN /kitware-archive.sh
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \
         # GCC, Binutils:
         wget build-essential gcc texinfo \
-        # CMake build:
+        # Project build:
         sudo cmake ninja-build clang-tidy grub-common xorriso mtools
 
 ENV DOWNLOAD_BINUTILS=binutils-2.41
