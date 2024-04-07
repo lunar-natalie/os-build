@@ -1,1 +1,1 @@
-Operating system build environment and toolchain Docker image for `i686-pc-none-elf` targets.
+Docker image providing a build environment and toolchain for the `i686-elf` platform.
