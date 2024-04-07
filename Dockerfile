@@ -1,51 +1,48 @@
 FROM ubuntu:22.04
 
-# Add Kitware APT repo for CMake
+ENV BINUTILS_VERSION=2.41
+ENV GCC_VERSION=8.1.0
+
+ENV PLATFORM=i686-elf
+ENV PREFIX=/usr/local
+
+# Add Kitware repo for CMake
 ADD kitware-archive.sh /kitware-archive.sh
 RUN /kitware-archive.sh
 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \
-        # GCC, Binutils:
         wget build-essential gcc texinfo \
-        # Project build:
-        sudo cmake ninja-build clang-tidy grub-common xorriso mtools
+        sudo cmake ninja-build grub-common xorriso mtools
 
-ENV DOWNLOAD_BINUTILS=binutils-2.41
-ENV DOWNLOAD_GCC=gcc-8.1.0
-
-ENV TARGET=i686-elf
-ENV PREFIX=/usr/local
-
-# Binutils
-RUN wget -q http://ftp.gnu.org/gnu/binutils/$DOWNLOAD_BINUTILS.tar.gz && \
-    tar -xzf $DOWNLOAD_BINUTILS.tar.gz && \
+# Build Binutils
+RUN wget -q http://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.gz && \
+    tar -xzf binutils-$BINUTILS_VERSION.tar.gz && \
     mkdir -p /srv/build_binutils && \
     cd /srv/build_binutils && \
-    /$DOWNLOAD_BINUTILS/configure \
+    /binutils-$BINUTILS_VERSION/configure \
         --target=$TARGET \
         --prefix="$PREFIX" \
         --with-sysroot --disable-multilib --disable-nls --disable-werror && \
     make && \
     make install && \
-    rm -r /$DOWNLOAD_BINUTILS /srv/build_binutils
+    rm -r /binutils-$BINUTILS_VERSION /srv/build_binutils
 
-# GCC
-RUN wget -q ftp://ftp.gnu.org/gnu/gcc/$DOWNLOAD_GCC/$DOWNLOAD_GCC.tar.gz && \
-    tar -xzf $DOWNLOAD_GCC.tar.gz && \
-    cd /$DOWNLOAD_GCC && contrib/download_prerequisites && \
+# Build GCC
+RUN wget -q ftp://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.gz && \
+    tar -xzf gcc-$GCC_VERSION.tar.gz && \
+    cd /gcc-$GCC_VERSION && contrib/download_prerequisites && \
     mkdir -p /srv/build_gcc && \
     cd /srv/build_gcc && \
-    /$DOWNLOAD_GCC/configure \
+    /gcc-$GCC_VERSION/configure \
         --target=$TARGET \
         --prefix="$PREFIX" \
         --disable-multilib --disable-nls --enable-languages=c && \
     make all-gcc && \
     make install-gcc && \
-    rm -r /$DOWNLOAD_GCC /srv/build_gcc
+    rm -r /gcc-$GCC_VERSION /srv/build_gcc
 
-# Cleanup
 RUN apt-get clean autoclean
 
 WORKDIR /
