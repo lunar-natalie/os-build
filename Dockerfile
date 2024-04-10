@@ -20,6 +20,8 @@ RUN apt-get install -y wget build-essential bison texinfo
 RUN apt-get install -y cmake ninja-build grub-common xorriso
 # Install Clang tools
 RUN apt-get install -y clang-format-$CLANG_VERSION clang-tidy-$CLANG_VERSION
+# Install additional dependencies
+RUN apt-get install -y sudo
 
 # Build Binutils
 ENV BINUTILS=binutils-$BINUTILS_VERSION
