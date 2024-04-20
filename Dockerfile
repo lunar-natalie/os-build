@@ -2,7 +2,6 @@ FROM ubuntu:22.04
 
 ENV GCC_VERSION=8.1.0
 ENV BINUTILS_VERSION=2.41
-ENV CLANG_VERSION=11
 ENV TARGET=i686-elf
 ENV PREFIX=/usr/local
 
@@ -44,12 +43,16 @@ RUN chmod +x /kitware-archive.sh && \
 RUN apt-get update && \
     apt-get install -y cmake
 
+ENV CLANG_VERSION=11
+ENV PYTHON_VERSION=3.10
+
 # Install project build dependencies
 RUN apt-get install -y ninja-build grub-common xorriso
 # Install Clang tools
 RUN apt-get install -y clang-format-$CLANG_VERSION clang-tidy-$CLANG_VERSION
 # Install cpp-linter dependencies
-RUN apt-get install -y python3 sudo lsb-release software-properties-common gnupg
+RUN apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev sudo lsb-release software-properties-common gnupg
+
 # Cleanup
 RUN apt-get clean autoclean
 
